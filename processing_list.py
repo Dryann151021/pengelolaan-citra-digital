@@ -300,3 +300,93 @@ def ImgTemperature(img_input, coldepth, temp=0):
     elif coldepth == 8:
         img_output = img_output.convert("L")
     return img_output
+
+
+def ImgRotate3D(img_input, coldepth, angle_x=0, angle_y=0, fov=600):
+    """Simulasi rotasi 3D menggunakan perspective transform.
+    angle_x : rotasi sumbu X / tilt atas-bawah  (-60 .. +60 derajat)
+    angle_y : rotasi sumbu Y / pan kiri-kanan    (-60 .. +60 derajat)
+    fov     : jarak focal (perspektif strength), default 600
+    """
+    img_rgb = img_input.convert('RGB')
+    img_cv  = cv2.cvtColor(np.array(img_rgb), cv2.COLOR_RGB2BGR)
+
+    h, w   = img_cv.shape[:2]
+    cx, cy = w / 2.0, h / 2.0
+
+    theta_x = np.radians(angle_x)
+    theta_y = np.radians(angle_y)
+
+    # Matriks rotasi 3D sumbu X
+    Rx = np.array([
+        [1,               0,                0],
+        [0,  np.cos(theta_x), -np.sin(theta_x)],
+        [0,  np.sin(theta_x),  np.cos(theta_x)],
+    ], dtype=np.float64)
+
+    # Matriks rotasi 3D sumbu Y
+    Ry = np.array([
+        [ np.cos(theta_y), 0, np.sin(theta_y)],
+        [0,                1,               0],
+        [-np.sin(theta_y), 0, np.cos(theta_y)],
+    ], dtype=np.float64)
+
+    R = Ry @ Rx  # Kombinasi rotasi Y lalu X
+
+    # Sudut-sudut gambar (koordinat tengah sebagai origin)
+    corners_3d = np.array([
+        [-cx, -cy, 0],
+        [ cx, -cy, 0],
+        [ cx,  cy, 0],
+        [-cx,  cy, 0],
+    ], dtype=np.float64)
+
+    # Proyeksi perspektif ke 2D
+    dst_pts = []
+    for pt in corners_3d:
+        r = R @ pt
+        z = fov / (fov + r[2]) if (fov + r[2]) != 0 else 1.0
+        dst_pts.append([r[0] * z + cx, r[1] * z + cy])
+
+    src_corners = np.float32([[0, 0], [w, 0], [w, h], [0, h]])
+    dst_corners = np.float32(dst_pts)
+
+    M      = cv2.getPerspectiveTransform(src_corners, dst_corners)
+    result = cv2.warpPerspective(
+        img_cv, M, (w, h),
+        flags=cv2.INTER_LINEAR,
+        borderMode=cv2.BORDER_REPLICATE,
+    )
+
+    img_output = Image.fromarray(cv2.cvtColor(result, cv2.COLOR_BGR2RGB))
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+
+    return img_output
+
+
+def ImgPosterize(img_input, coldepth, levels=4):
+    """Mengurangi level warna untuk memberikan efek poster/komik/retro (Posterization).
+    levels: jumlah level warna per channel (biasanya 2-8)
+    """
+    img_rgb = img_input.convert('RGB')
+    img_arr = np.array(img_rgb, dtype=np.uint8)
+
+    # Menghitung faktor pengelompokan warna
+    factor = 256 // levels
+    # Mengelompokkan warna ke level terdekat
+    posterized = (img_arr // factor) * factor + (factor // 2)
+    # Clip agar tetap dalam range 0-255
+    posterized = np.clip(posterized, 0, 255).astype(np.uint8)
+
+    img_output = Image.fromarray(posterized, mode='RGB')
+
+    if coldepth == 1:
+        img_output = img_output.convert("1")
+    elif coldepth == 8:
+        img_output = img_output.convert("L")
+
+    return img_output
