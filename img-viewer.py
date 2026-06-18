@@ -1,11 +1,11 @@
 import PySimpleGUI as sg
 import os.path
-from PIL import Image, ImageOps
+from PIL import Image
 from processing_list import *
 
 # Set theme
-sg.theme('DarkGrey14')
-sg.set_options(font=('Arial', 10))
+sg.theme("DarkGrey14")
+sg.set_options(font=("Arial", 10))
 
 # Kolom Area No 1: Area open folder and select image
 file_list_column = [
@@ -19,11 +19,7 @@ file_list_column = [
     [
         sg.Text("Choose an image from list :"),
     ],
-    [
-        sg.Listbox(
-            values=[], enable_events=True, size=(30, 20), key="ImgList"
-        )
-    ],
+    [sg.Listbox(values=[], enable_events=True, size=(30, 20), key="ImgList")],
 ]
 
 # Kolom Area No 2: Area viewer image input dan output
@@ -52,49 +48,112 @@ img_info_frame = [
 crop_frame = [
     [sg.Text("Koordinat & Ukuran Crop (px):", font=("Arial", 9))],
     [
-        sg.Text("X", size=(2, 1)), sg.Input("0", size=(6, 1), key="CropX"),
-        sg.Text("Y", size=(2, 1)), sg.Input("0", size=(6, 1), key="CropY"),
+        sg.Text("X", size=(2, 1)),
+        sg.Input("0", size=(6, 1), key="CropX"),
+        sg.Text("Y", size=(2, 1)),
+        sg.Input("0", size=(6, 1), key="CropY"),
     ],
     [
-        sg.Text("W", size=(2, 1)), sg.Input("100", size=(6, 1), key="CropW"),
-        sg.Text("H", size=(2, 1)), sg.Input("100", size=(6, 1), key="CropH"),
+        sg.Text("W", size=(2, 1)),
+        sg.Input("100", size=(6, 1), key="CropW"),
+        sg.Text("H", size=(2, 1)),
+        sg.Input("100", size=(6, 1), key="CropH"),
     ],
-    [
-        sg.Text("(gunakan ukuran piksel asli)", font=("Arial", 8))
-    ],
-    [
-        sg.Button("✂ Crop", size=(25, 1), key="ImgCrop")
-    ],
+    [sg.Text("(gunakan ukuran piksel asli)", font=("Arial", 8))],
+    [sg.Button("✂ Crop", size=(25, 1), key="ImgCrop")],
 ]
 
 list_of_processing_frame = [
     [
         sg.Text("Brightness", size=(11, 1)),
-        sg.Slider(range=(0.2, 2.0), default_value=1.0, resolution=0.2, orientation='h', enable_events=True, disable_number_display=True, size=(12, 12), key="SliderBrightness")
+        sg.Slider(
+            range=(0.2, 2.0),
+            default_value=1.0,
+            resolution=0.2,
+            orientation="h",
+            enable_events=True,
+            disable_number_display=True,
+            size=(12, 12),
+            key="SliderBrightness",
+        ),
     ],
     [
         sg.Text("Contrast", size=(11, 1)),
-        sg.Slider(range=(0.2, 2.0), default_value=1.0, resolution=0.2, orientation='h', enable_events=True, disable_number_display=True, size=(12, 12), key="SliderContrast")
+        sg.Slider(
+            range=(0.2, 2.0),
+            default_value=1.0,
+            resolution=0.2,
+            orientation="h",
+            enable_events=True,
+            disable_number_display=True,
+            size=(12, 12),
+            key="SliderContrast",
+        ),
     ],
     [
         sg.Text("Sharpening", size=(11, 1)),
-        sg.Slider(range=(0.0, 4.0), default_value=1.0, resolution=0.2, orientation='h', enable_events=True, disable_number_display=True, size=(12, 12), key="SliderSharp")
+        sg.Slider(
+            range=(0.0, 4.0),
+            default_value=1.0,
+            resolution=0.2,
+            orientation="h",
+            enable_events=True,
+            disable_number_display=True,
+            size=(12, 12),
+            key="SliderSharp",
+        ),
     ],
     [
         sg.Text("Blur Radius", size=(11, 1)),
-        sg.Slider(range=(0, 20), default_value=0, resolution=1, orientation='h', enable_events=True, disable_number_display=True, size=(12, 12), key="SliderBlur")
+        sg.Slider(
+            range=(0, 20),
+            default_value=0,
+            resolution=1,
+            orientation="h",
+            enable_events=True,
+            disable_number_display=True,
+            size=(12, 12),
+            key="SliderBlur",
+        ),
     ],
     [
         sg.Text("Noise", size=(11, 1)),
-        sg.Slider(range=(0, 100), default_value=0, resolution=5, orientation='h', enable_events=True, disable_number_display=True, size=(12, 12), key="SliderNoise")
+        sg.Slider(
+            range=(0, 100),
+            default_value=0,
+            resolution=5,
+            orientation="h",
+            enable_events=True,
+            disable_number_display=True,
+            size=(12, 12),
+            key="SliderNoise",
+        ),
     ],
     [
         sg.Text("Temperature", size=(11, 1)),
-        sg.Slider(range=(-100, 100), default_value=0, resolution=5, orientation='h', enable_events=True, disable_number_display=True, size=(12, 12), key="SliderTemp")
+        sg.Slider(
+            range=(-100, 100),
+            default_value=0,
+            resolution=5,
+            orientation="h",
+            enable_events=True,
+            disable_number_display=True,
+            size=(12, 12),
+            key="SliderTemp",
+        ),
     ],
     [
         sg.Text("Thresholding", size=(11, 1)),
-        sg.Slider(range=(0, 255), default_value=127, resolution=1, orientation='h', enable_events=True, disable_number_display=True, size=(12, 12), key="SliderThreshold")
+        sg.Slider(
+            range=(0, 255),
+            default_value=127,
+            resolution=1,
+            orientation="h",
+            enable_events=True,
+            disable_number_display=True,
+            size=(12, 12),
+            key="SliderThreshold",
+        ),
     ],
     [
         sg.Button("Rotate 90°", size=(10, 1), key="ImgRotateClockwise"),
@@ -122,64 +181,55 @@ list_of_processing_frame = [
 ]
 
 save_reset_frame = [
-    [
-        sg.Button("Save", size=(25, 1), button_color=('white', 'green'), key="ImgSave")
-    ],
-    [
-        sg.Button("Reset", size=(25, 1), button_color=('white', 'red'), key="ImgReset")
-    ],
+    [sg.Button("Save", size=(25, 1), button_color=("white", "green"), key="ImgSave")],
+    [sg.Button("Reset", size=(25, 1), button_color=("white", "red"), key="ImgReset")],
 ]
 
 # Gabung Layout List Processing
 list_processing = [
+    [sg.Frame("Image Information", img_info_frame)],
+    [sg.Frame("Crop", crop_frame, element_justification="center")],
     [
-        sg.Frame("Image Information", img_info_frame)
+        sg.Frame(
+            "List of Processing",
+            list_of_processing_frame,
+            element_justification="center",
+        )
     ],
-    [
-        sg.Frame("Crop", crop_frame, element_justification="center")
-    ],
-    [
-        sg.Frame("List of Processing", list_of_processing_frame, element_justification="center")
-    ],
-    [
-        sg.Frame("", save_reset_frame, border_width=0)
-    ],
+    [sg.Frame("", save_reset_frame, border_width=0)],
 ]
 
 # Gabung Full layout
 layout = [
     [
         sg.Column(file_list_column),
-        sg.VSeparator(color="#1B1C21", pad=(5,5)),
+        sg.VSeparator(color="#1B1C21", pad=(5, 5)),
         sg.Column(image_viewer_column),
         sg.Column(image_viewer_column2),
-        sg.VSeparator(color="#1B1C21", pad=(5,5)),
+        sg.VSeparator(color="#1B1C21", pad=(5, 5)),
         sg.Column(list_processing),
     ]
 ]
 
 window = sg.Window("Mini Image Editor", layout)
 
-# Ukuran maksimum tampilan viewer (berdasarkan abu-goyim.png = 420x280)
 MAX_W, MAX_H = 420, 280
 
+
 def resize_for_display(img, save_path):
-    """Resize gambar agar muat di viewer tanpa mengubah aspect ratio."""
     w, h = img.size
-    scale = min(MAX_W / w, MAX_H / h, 1.0)  # 1.0 = tidak pernah diperbesar
+    scale = min(MAX_W / w, MAX_H / h, 1.0)
     new_w, new_h = int(w * scale), int(h * scale)
     img_resized = img.resize((new_w, new_h), Image.LANCZOS)
     img_resized.save(save_path)
     return save_path
 
-# Folder untuk file temporary
-import os
+
 TEMP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "temp")
 os.makedirs(TEMP_DIR, exist_ok=True)
 
-# nama image file temporary setiap kali processing output
 filename_out = os.path.join(TEMP_DIR, "out.png")
-temp_input   = os.path.join(TEMP_DIR, "temp_input.png")
+temp_input = os.path.join(TEMP_DIR, "temp_input.png")
 rotate_deg = 0
 brightness_level = 1.0
 contrast_level = 1.0
@@ -211,27 +261,32 @@ while True:
 
     elif event == "ImgList":
         try:
-            filename = os.path.join(
-                values["ImgFolder"], values["ImgList"][0]
-            )
+            filename = os.path.join(values["ImgFolder"], values["ImgList"][0])
             window["FilepathImgInput"].update(filename)
 
             img_input = Image.open(filename)
             img_input_rgb = img_input.convert("RGB")
 
-            # Tampilkan gambar input dengan resize
             resize_for_display(img_input_rgb, temp_input)
             window["ImgInputViewer"].update(filename=temp_input)
             window["ImgProcessingType"].update(filename)
             window["ImgOutputViewer"].update(filename=temp_input)
 
-            # Tampilkan ukuran asli gambar
             img_width, img_height = img_input.size
             window["ImgSize"].update(f"Size: {img_width} x {img_height} px")
 
             mode_to_coldepth = {
-                "1": 1, "L": 8, "P": 8, "RGB": 24, "RGBA": 32,
-                "CMYK": 32, "YCbCr": 24, "LAB": 24, "HSV": 24, "I": 32, "F": 32
+                "1": 1,
+                "L": 8,
+                "P": 8,
+                "RGB": 24,
+                "RGBA": 32,
+                "CMYK": 32,
+                "YCbCr": 24,
+                "LAB": 24,
+                "HSV": 24,
+                "I": 32,
+                "F": 32,
             }
             coldepth = mode_to_coldepth[img_input.mode]
             window["ImgColorDepth"].update(f"Depth: {coldepth} bit")
@@ -280,8 +335,12 @@ while True:
         try:
             brightness_level = values["SliderBrightness"]
             contrast_level = values["SliderContrast"]
-            window["ImgProcessingType"].update(f"Brightness: {brightness_level:.1f}x | Contrast: {contrast_level:.1f}x")
-            img_output = ImgBrightnessContrast(img_input, coldepth, brightness_level, contrast_level)
+            window["ImgProcessingType"].update(
+                f"Brightness: {brightness_level:.1f}x | Contrast: {contrast_level:.1f}x"
+            )
+            img_output = ImgBrightnessContrast(
+                img_input, coldepth, brightness_level, contrast_level
+            )
             resize_for_display(img_output, filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
         except:
@@ -319,7 +378,9 @@ while True:
     elif event == "ImgErosion":
         try:
             window["ImgProcessingType"].update("Erosion")
-            img_output = ImgErosionDilation(img_input, coldepth, operation='erosion', kernel_size=5, iterations=1)
+            img_output = ImgErosionDilation(
+                img_input, coldepth, operation="erosion", kernel_size=5, iterations=1
+            )
             resize_for_display(img_output, filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
         except:
@@ -328,7 +389,9 @@ while True:
     elif event == "ImgDilation":
         try:
             window["ImgProcessingType"].update("Dilation")
-            img_output = ImgErosionDilation(img_input, coldepth, operation='dilation', kernel_size=5, iterations=1)
+            img_output = ImgErosionDilation(
+                img_input, coldepth, operation="dilation", kernel_size=5, iterations=1
+            )
             resize_for_display(img_output, filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
         except:
@@ -365,7 +428,9 @@ while True:
     elif event == "SliderNoise":
         try:
             noise_intensity = int(values["SliderNoise"])
-            window["ImgProcessingType"].update(f"Gaussian Noise (intensity={noise_intensity})")
+            window["ImgProcessingType"].update(
+                f"Gaussian Noise (intensity={noise_intensity})"
+            )
             img_output = ImgGaussianNoise(img_input, coldepth, noise_intensity)
             resize_for_display(img_output, filename_out)
             window["ImgOutputViewer"].update(filename=filename_out)
@@ -375,7 +440,11 @@ while True:
     elif event == "SliderTemp":
         try:
             temp_val = int(values["SliderTemp"])
-            label = f"Temperature: +{temp_val}" if temp_val >= 0 else f"Temperature: {temp_val}"
+            label = (
+                f"Temperature: +{temp_val}"
+                if temp_val >= 0
+                else f"Temperature: {temp_val}"
+            )
             window["ImgProcessingType"].update(label)
             img_output = ImgTemperature(img_input, coldepth, temp_val)
             resize_for_display(img_output, filename_out)
@@ -390,11 +459,19 @@ while True:
                 title="Save Image",
                 save_as=True,
                 default_extension=".png",
-                file_types=(("PNG", "*.png"), ("JPEG", "*.jpg *.jpeg"), ("BMP", "*.bmp"), ("All", "*.*")),
+                file_types=(
+                    ("PNG", "*.png"),
+                    ("JPEG", "*.jpg *.jpeg"),
+                    ("BMP", "*.bmp"),
+                    ("All", "*.*"),
+                ),
             )
             if save_path:
                 img_output.save(save_path)
-                sg.popup_ok(f"Gambar berhasil disimpan ke:\n{save_path}", title="Simpan Berhasil")
+                sg.popup_ok(
+                    f"Gambar berhasil disimpan ke:\n{save_path}",
+                    title="Simpan Berhasil",
+                )
         except Exception as e:
             sg.popup_error(f"Gagal menyimpan: {e}", title="Error Save")
 

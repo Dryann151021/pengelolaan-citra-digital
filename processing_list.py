@@ -1,4 +1,4 @@
-from PIL import Image, ImageOps, ImageEnhance, ImageFilter
+from PIL import Image, ImageEnhance, ImageFilter
 import cv2
 import numpy as np
 
@@ -40,30 +40,6 @@ def ImgRotate(img_input, coldepth, deg, direction):
         img_output = img_output.convert("RGB")
     
     return img_output
-
-    # # solusi 2
-    # if coldepth != 24:
-    #     img_input = img_input.convert('RGB')
-
-    # img_output = Image.new('RGB', (img_input.size[1], img_input.size[0]))
-    # pixels = img_output.load()
-    # for i in range(img_output.size[0]):
-    #     for j in range(img_output.size[1]):
-    #         if direction == "C":
-    #             r, g, b = img_input.getpixel((j, img_output.size[0] - i - 1))
-    #         else:
-    #             r, g, b = img_input.getpixel((img_input.size[1] - j - 1, i))
-    #         pixels[i, j] = (r, g, b)
-
-    # if coldepth == 1:
-    #     img_output = img_output.convert("1")
-    # elif coldepth == 8:
-    #     img_output = img_output.convert("L")
-    # else:
-    #     img_output = img_output.convert("RGB")
-
-    # return img_output
-
 
 def ImgGrayscale(img_input, coldepth):
     """Convert image to grayscale"""
